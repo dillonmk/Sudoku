@@ -65,7 +65,9 @@ def boxConversion(board):
             boxes = np.append(boxes,box_1)
     
     "Reshape the matrix so that it sorts each 'boxes values' into the proper rows"
+    
     boxes = boxes.reshape(9,9)
+    
     return(boxes)
 
 
@@ -151,10 +153,74 @@ in the last box. This way there will not be any conflicts
 "twice"
 
 "Need to keep track of available numbers in each box"
-box_no = 0
-boxes_filled = int(0)
 
+def generator():
+    
+    box_no = 0
+    boxes_filled = int(0)
+    row = int(0)
+    column = int(0)
+    z_rows = np.zeros((1,9), dtype = int)
+    
+    
+    while row <= 8:
+        column = 0
+        numbers = np.arange(1,10,1)
+        
+        while column <= 8:
+            box_no = whichBox(row,column)
+            
+            'valid_picks = np.intersect1d(numbers, available_box[box_no])'
+            valid_picks = numbers
+            placed = bool(False)
+            counter = 0
+            while placed == False:
+                value = random.choice(valid_picks)
+                
+                allowed = False
+                if checkRow(board, row, value) != True:
+                    allowed = True
+                    
+                if allowed == True and checkColumn(board,column,value) == True:
+                    allowed = False
+                    
+                if allowed == True and checkBox(board, box_no, value) == True:
+                    allowed = False
+                
+                if allowed == True:
+                    board[row,column] = value
+                    placed = True
+                counter += 1
+                "**********counter may need to be more than 10 **********"
+                if counter > 20:
+                    'code that will set current row back to zeros'
+                    break
+                
+            if placed == True:
+                numbers = numbers[numbers != value]
+                available_box[0] = np.where(available_box[0]!=value, available_box[0],0)
+                boxes_filled += 1
+                column += 1
+                
+                
+            elif placed == False and counter>20:
+                column = 0
+                board[row] = z_rows
+                numbers = np.arange(1,10,1)
+                available_box[box_no-1] = numbers
+    
+            
+                
+    
+        row += 1
+        column = 0
+
+generator()
+
+
+'''
 for row in range(0,9):
+    
     "Available Numbers to Append"
     numbers = np.arange(1,10,1)        
     
@@ -167,8 +233,8 @@ for row in range(0,9):
         placed = bool(False)
         
         while placed == False:
-            "Chosing random value from numbers"
             
+            "Chosing random value from numbers"
             value = random.choice(valid_picks)       
 
             allowed = False
@@ -196,7 +262,7 @@ for row in range(0,9):
         
 
 
-
+'''
 
 
    
