@@ -6,7 +6,7 @@ Created on Sat Nov 27 10:25:59 2021
 @author: dillon
 """
 
-"We are going to write some code to play sudoku" 
+"We are going to write some code to play sudoku"
 
 "First we are going to write a random sudoku game generator"
 
@@ -17,20 +17,16 @@ import numpy as np
 
 """""""""Creating the Board"""""""""
 
-"Columns"
-n = int(9)
-"Rows"
-m = int(9)
 
 "Empty 9x9 for the playing board"
-board = np.zeros((n,m),dtype=int)
+board = np.zeros((9,9),dtype=int)
 
 "This is going to be a matrix that tracks available numbers for each 'box'"
 b = np.arange(1,10,1)
 available_box = np.zeros((9,9),dtype = int)
 for x in range(9):
     available_box[x] = b
-  
+
 
 
 ## Box names will go down column then next column down etc.
@@ -61,23 +57,24 @@ def boxConversion(board):
             for x in range(3):
                 selection = board[x+row][column+0:column+3]
                 box_1 = np.append(box_1,selection)
-            "now append this collection array to the empty matrix" 
+            "now append this collection array to the empty matrix"
             boxes = np.append(boxes,box_1)
-    
+
     "Reshape the matrix so that it sorts each 'boxes values' into the proper rows"
-    
+
     boxes = boxes.reshape(9,9)
-    
+
     return(boxes)
 
 
 "Now that we have an algorithm for sorting each part we need to check into rows of a matrix, we "
 "can start working on placing the random values and then checking"
 
+"Returns true if value is in the box"
 def checkBox(board, box_no, value):
 
     box_matrix = boxConversion(board)
-    
+
     for element in box_matrix[box_no-1]:
         if element == value:
             inRow = True
@@ -85,8 +82,8 @@ def checkBox(board, box_no, value):
         elif element != value:
             inRow = False
     return(inRow)
-    
 
+"Returns true if value is in the column"
 def checkColumn(board, column, value):
     column_matrix = board.transpose()
     for element in column_matrix[column]:
@@ -96,7 +93,7 @@ def checkColumn(board, column, value):
         elif element != value:
             inRow = False
     return(inRow)
- 
+
 
 "Returns true if value is in the row"
 def checkRow(board, row, value):
@@ -107,7 +104,7 @@ def checkRow(board, row, value):
         elif element != value:
             inRow = False
     return(inRow)
-   
+
 
 "Will Return which box I am searching currently"
 def whichBox(row, column):
@@ -120,7 +117,7 @@ def whichBox(row, column):
     if row == 0 or row == 1 or row == 2:
         if column == 6 or column == 7 or column  == 8:
             box = 7
-        
+
     if row == 3 or row == 4 or row == 5:
         if column == 0 or column  == 1 or column  == 2:
             box = 2
@@ -130,7 +127,7 @@ def whichBox(row, column):
     if row == 3 or row == 4 or row == 5:
         if column == 6 or column  == 7 or column  == 8:
             box = 8
-            
+
     if row == 6 or row == 7 or row == 8:
         if column == 0 or column  == 1 or column  == 2:
             box = 3
@@ -141,128 +138,83 @@ def whichBox(row, column):
         if column == 6 or column  == 7 or column  == 8:
             box = 9
     return(box)
-            
 
 
-'''################## What needs to Be done Next ##############
-A comparison vector needs to be made to force a pick that has already been made 
-in the last box. This way there will not be any conflicts
-################################################################'''
 
-"Pulls out number that is selected so now less to chose from with random and cant get same one" 
-"twice"
 
-"Need to keep track of available numbers in each box"
-
+"Function that will generate the board"
 def generator():
-    
+
+    'Attempts to keep track if it gets stuck in a row, then reset'
+    attempts = 0
     box_no = 0
-    boxes_filled = int(0)
     row = int(0)
     column = int(0)
     z_rows = np.zeros((1,9), dtype = int)
-    
-    
+    board = np.zeros((9,9),dtype=int)
+
     while row <= 8:
         column = 0
         numbers = np.arange(1,10,1)
-        
+        attempts = 0
+
         while column <= 8:
+
             box_no = whichBox(row,column)
-            
+
             'valid_picks = np.intersect1d(numbers, available_box[box_no])'
             valid_picks = numbers
             placed = bool(False)
             counter = 0
             while placed == False:
                 value = random.choice(valid_picks)
-                
+
                 allowed = False
                 if checkRow(board, row, value) != True:
                     allowed = True
-                    
+
                 if allowed == True and checkColumn(board,column,value) == True:
                     allowed = False
-                    
+
                 if allowed == True and checkBox(board, box_no, value) == True:
                     allowed = False
-                
+
                 if allowed == True:
                     board[row,column] = value
                     placed = True
                 counter += 1
-                "**********counter may need to be more than 10 **********"
                 if counter > 20:
-                    'code that will set current row back to zeros'
                     break
-                
+
             if placed == True:
                 numbers = numbers[numbers != value]
-                available_box[0] = np.where(available_box[0]!=value, available_box[0],0)
-                boxes_filled += 1
+                'available_box[0] = np.where(available_box[0]!=value, available_box[0],0)'
                 column += 1
-                
-                
+
+
             elif placed == False and counter>20:
                 column = 0
                 board[row] = z_rows
                 numbers = np.arange(1,10,1)
                 available_box[box_no-1] = numbers
-    
-            
-                
-    
+                attempts += 1
+
+            if attempts > 20:
+                break
+
+
+
         row += 1
         column = 0
-
-generator()
-
-
-'''
-for row in range(0,9):
-    
-    "Available Numbers to Append"
-    numbers = np.arange(1,10,1)        
-    
-    for column in range(0,9):
         
-        box_no = whichBox(row, column)
-        
-        "Need to compare available in box and row to avoid conflicts"
-        valid_picks = np.intersect1d(numbers, available_box[box_no])
-        placed = bool(False)
-        
-        while placed == False:
-            
-            "Chosing random value from numbers"
-            value = random.choice(valid_picks)       
-
-            allowed = False
-            if checkRow(board, row, value) != True:
-                allowed = True
-                
-            if allowed == True and checkColumn(board,column,value) == True:
-                allowed = False
-                
-            if allowed == True and checkBox(board, box_no, value) == True:
-                allowed = False
-            
-            if allowed == True:
-                board[row,column] = value
-                placed = True
-            
-            
-        "Subtracting value from numbers" 
-        
-        numbers = numbers[numbers != value] 
-        available_box[0] = np.where(available_box[0]!=value, available_box[0], 0)
-        boxes_filled += 1
-        
-        print(boxes_filled)
-        
+        if attempts > 20:
+                row = 0
+                column = 0
+                board = np.zeros((9,9),dtype=int)
+                box_no = 0
+    return(board)
 
 
-'''
+game_board = generator()
 
 
-   
