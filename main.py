@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# Created By Dillon
+
 """
 Created on Sat Nov 27 10:25:59 2021
 
@@ -215,6 +215,74 @@ def generator():
     return(board)
 
 
+
 game_board = generator()
+
+
+
+
+"Tiles to remove based on difficulty"
+easy = 40
+medium = 45
+hard = 50
+super_hard = 55
+
+
+
+def removeCells(difficulty, board):
+    cells_removed = 0
+    box_number = 0
+    removed_each_box = np.zeros(9, dtype = int)
+    length = np.arange(0,9,1)
+    
+    while cells_removed <= difficulty:
+        row = random.choice(length)
+        column = random.choice(length)
+        box_number = whichBox(row, column)
+        if removed_each_box[box_number -1] <= 8:
+            if board[row,column] != 0:
+                board[row,column] = 0
+                cells_removed += 1
+                removed_each_box[box_number - 1] += 1
+    
+    return(board)                
+                
+        
+
+            
+removed_board = removeCells(super_hard, game_board)
+print(removed_board)           
+            
+        
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
