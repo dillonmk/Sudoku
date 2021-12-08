@@ -12,7 +12,7 @@ Created on Sat Nov 27 10:25:59 2021
 
 import random
 import numpy as np
-
+from tkinter import *
 
 
 """""""""Creating the Board"""""""""
@@ -250,7 +250,7 @@ def removeCells(difficulty, board):
         
 
             
-removed_board = removeCells(super_hard, game_board)
+removed_board = removeCells(medium, game_board)
 print(removed_board)           
             
         
