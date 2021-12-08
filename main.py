@@ -12,7 +12,6 @@ Created on Sat Nov 27 10:25:59 2021
 
 import random
 import numpy as np
-from tkinter import *
 
 
 """""""""Creating the Board"""""""""
@@ -206,7 +205,7 @@ def generator():
 
         row += 1
         column = 0
-        
+
         if attempts > 20:
                 row = 0
                 column = 0
@@ -216,7 +215,7 @@ def generator():
 
 
 
-game_board = generator()
+
 
 
 
@@ -234,7 +233,7 @@ def removeCells(difficulty, board):
     box_number = 0
     removed_each_box = np.zeros(9, dtype = int)
     length = np.arange(0,9,1)
-    
+
     while cells_removed <= difficulty:
         row = random.choice(length)
         column = random.choice(length)
@@ -244,45 +243,11 @@ def removeCells(difficulty, board):
                 board[row,column] = 0
                 cells_removed += 1
                 removed_each_box[box_number - 1] += 1
-    
-    return(board)                
-                
-        
 
-            
-removed_board = removeCells(medium, game_board)
-print(removed_board)           
-            
-        
-    
-    
-    
+    return(board)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+'''removed_board = removeCells(medium, generator())
+print(removed_board)'''
